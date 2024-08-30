@@ -5,8 +5,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   include 'connect.php';
 
   // Retrieve form data
-  $name = trim($_POST['name']);
-  $email = trim($_POST['email']);
+  $name =htmlspecialchars(trim($_POST['name']));
+  $email =htmlspecialchars(trim($_POST['email']));
   $password = $_POST['password'];
 
   // Server-side validation
