@@ -5,11 +5,10 @@ $password = "Ujjawal@7307";
 $db = "signupforms";
 
 $con = mysqli_connect($host, $user, $password, $db);
-if($con){
-    echo "Connected";
-}
-else{
-    die(mysqli_error($con));
+
+
+if (!$con) {
+    die(mysqli_error($con)); // Display error only if connection fails
 }
 
 
