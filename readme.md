@@ -4,17 +4,7 @@
 Today I'm starting my next step towards Full stack Development.    From today I'm going to start my PHP learning, along with SQL. This going to be a projects base learning process.
 
 # 1. A SignUp and SignIn page
-Tech Stack
-PHP: Server-side scripting.
-MySQL: Database for storing user data.
-Bootstrap: Frontend framework for responsive design.
-XAMPP: Local development environment.
-Setup Instructions
-Clone the repository.
-Set up a local server (e.g., XAMPP).
-Import the SQL file to create the database.
-Update connect.php with your database details.
-Run the project on your local server.
+
 
  - **User Registration:**  Allows users to sign up with their name, email, and password.
 
