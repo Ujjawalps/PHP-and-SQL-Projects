@@ -9,27 +9,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $email = $_POST['email'];
   $password = $_POST['password'];
 
-  // Check if email already exists in the database
-  $checkEmailQuery = "SELECT * FROM registration WHERE email='$email'";
-  $result = mysqli_query($con, $checkEmailQuery);
+  // Check if email already exists in the database using prepared statement
+  $checkEmailQuery = "SELECT * FROM registration WHERE email=?";
+  $stmt = $con->prepare($checkEmailQuery);
+  $stmt->bind_param("s", $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
-  if (mysqli_num_rows($result) > 0) {
+  if ($result->num_rows > 0) {
     // Email already exists
     $successMessage = "Email Already Exists...";
   } else {
-    // Insert new record
-    $sql = "INSERT INTO registration (name, email, password) VALUES ('$name', '$email', '$password')";
-    $insertResult = mysqli_query($con, $sql);
-
-    if ($insertResult) {
+    // Hash the password before storing it
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    
+    // Insert new record using prepared statement
+    $sql = "INSERT INTO registration (name, email, password) VALUES (?, ?, ?)";
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param("sss", $name, $email, $hashedPassword);
+    
+    if ($stmt->execute()) {
       // Set success message
       $successMessage = "Data inserted successfully";
-
-      // Optionally redirect to the same page to clear form data
       header("Location: sign.php?success=true");
       exit();
     } else {
-      die(mysqli_error($con));
+      die("Error: " . $stmt->error); // Show more specific error
     }
   }
 }
