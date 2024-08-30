@@ -97,6 +97,9 @@ if (isset($_GET['success'])) {
         </div>
         <button type="submit" class="btn btn-primary">Sign Up</button>
       </form>
+      <div class="mt-3">
+        <p>Already have an account? <a href="login.php">Login here</a>.</p>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-wIYHlrqNp0mv1wB1aTbWxqfXlyc3d6dq8IH8V3nbbqeC1G/+GEu5zVfnzAOQ6w1Y" crossorigin="anonymous"></script>
