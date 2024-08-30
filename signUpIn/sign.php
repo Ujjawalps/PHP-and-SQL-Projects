@@ -5,46 +5,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   include 'connect.php';
 
   // Retrieve form data
-  $name = $_POST['name'];
-  $email = $_POST['email'];
+  $name = trim($_POST['name']);
+  $email = trim($_POST['email']);
   $password = $_POST['password'];
 
-  // Check if email already exists in the database using prepared statement
-  $checkEmailQuery = "SELECT * FROM registration WHERE email=?";
-  $stmt = $con->prepare($checkEmailQuery);
-  $stmt->bind_param("s", $email);
-  $stmt->execute();
-  $result = $stmt->get_result();
-
-  if ($result->num_rows > 0) {
-    // Email already exists
-    $successMessage = "Email Already Exists...";
+  // Server-side validation
+  if (empty($name) || strlen($name) < 2) {
+    $successMessage = "Please enter a valid name (at least 2 characters).";
+  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $successMessage = "Please enter a valid email address.";
+  } elseif (strlen($password) < 8) {
+    $successMessage = "Password must be at least 8 characters long.";
   } else {
-    // Hash the password before storing it
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    
-    // Insert new record using prepared statement
-    $sql = "INSERT INTO registration (name, email, password) VALUES (?, ?, ?)";
-    $stmt = $con->prepare($sql);
-    $stmt->bind_param("sss", $name, $email, $hashedPassword);
-    
-    if ($stmt->execute()) {
-      // Set success message
-      $successMessage = "Data inserted successfully";
-      header("Location: sign.php?success=true");
-      exit();
+    // Check if email already exists in the database using prepared statement
+    $checkEmailQuery = "SELECT * FROM registration WHERE email=?";
+    $stmt = $con->prepare($checkEmailQuery);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+      // Email already exists
+      $successMessage = "Email Already Exists...";
     } else {
-      die("Error: " . $stmt->error); // Show more specific error
+      // Hash the password before storing it
+      $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+      
+      // Insert new record using prepared statement
+      $sql = "INSERT INTO registration (name, email, password) VALUES (?, ?, ?)";
+      $stmt = $con->prepare($sql);
+      $stmt->bind_param("sss", $name, $email, $hashedPassword);
+      
+      if ($stmt->execute()) {
+        // Set success message
+        $successMessage = "Data inserted successfully";
+        header("Location: sign.php?success=true");
+        exit();
+      } else {
+        die("Error: " . $stmt->error); // Show more specific error
+      }
     }
   }
 }
 
-// If redirected with success, show the message
+// Display success message
 if (isset($_GET['success'])) {
   $successMessage = "Data inserted successfully";
 }
-
 ?>
+
 
 <!doctype html>
 <html lang="en">
